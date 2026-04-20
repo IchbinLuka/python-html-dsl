@@ -80,8 +80,20 @@ class component(Generic[P]):
     def __init__(self, fun: Callable[P, Element]) -> None:
         self.fun = fun
 
-    def __getitem__(self, *args):
-        return self.fun()[*args]  # type: ignore
+    def __getitem__(self, children: tuple[Child, ...] | Child):
+        return self.fun()[children]  # type: ignore
 
     def __call__(self, *args: P.args, **kwargs: P.kwargs):
         return self.fun(*args, **kwargs)
+
+class Fragment(Element):
+    """A container element that does not render any HTML tag, useful for grouping children without a wrapper.
+    Similar to fragments (<>...</>) in React.
+    """
+    name = ""
+
+    def __init__(self) -> None:
+        super().__init__()
+
+    def __str__(self) -> str:
+        return "".join(str(child) for child in self.children)

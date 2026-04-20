@@ -55,11 +55,13 @@ foo = div[
 
 ## Slots
 
-If you want to implement functional components where children should be put in a specific slot, you can do the following:
+If you want to implement functional components where children should be put in a specific slot, you can do the following.
+A slot can be any element, however for this purpose, we also provide a special `Fragment` element that behaves similar to
+fragments in React (<>...</>) and does not force you to wrap the children of the component in an element.
 
 ```python
 def get_element(title: str) -> Element:
-    slot = div()
+    slot = Fragment()
     return div[
         p[title],
         slot,
@@ -67,7 +69,8 @@ def get_element(title: str) -> Element:
     ].set_slot(slot)
 
 foo = get_element("cool title")[
-    div["Hello, World!"]
+    div["Hello, World!"],
+    p["Goodbye!"],
 ]
 
 print(foo)
@@ -79,6 +82,7 @@ This will yield the following HTML:
 <div>
   <p>cool title</p>
   <div>Hello, World!</div>
+  <p>Goodbye!</p>
   <p>Footer</p>
 </div>
 ```
@@ -91,7 +95,7 @@ chilren, similar to regular Elements:
 ```python
 @component
 def my_component(title: str | None = None) -> Element:
-    slot = div()
+    slot = Fragment()
     return div[title or "no title", slot].set_slot(slot)
 
 view = my_component["Hello, World!"]
