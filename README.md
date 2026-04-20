@@ -23,7 +23,7 @@ foo = div[
 print(foo.render())
 ```
 
-For specifyign HTML attributes, you can do the following:
+For specifying HTML attributes, you can do the following:
 
 ```python
 image = div[
