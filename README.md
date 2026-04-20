@@ -52,3 +52,33 @@ foo = div[
     f"For more information see {a(href='example.com')['This cool website']}"
 ]
 ```
+
+## Slots
+
+If you want to implement functional components where children should be put in a specific slot, you can do the following:
+
+```python
+def nice_component(title: str) -> Element:
+    slot = div()
+    return div[
+        p[title],
+        slot,
+        p["Footer"]
+    ].set_slot(slot)
+
+foo = nice_component("cool title")[
+    div["Hello, World!"]
+]
+
+print(foo)
+```
+
+This will yield the following HTML:
+
+```html
+<div>
+  <p>cool title</p>
+  <div>Hello, World!</div>
+  <p>Footer</p>
+</div>
+```
