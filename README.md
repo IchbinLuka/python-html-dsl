@@ -58,7 +58,7 @@ foo = div[
 If you want to implement functional components where children should be put in a specific slot, you can do the following:
 
 ```python
-def nice_component(title: str) -> Element:
+def get_element(title: str) -> Element:
     slot = div()
     return div[
         p[title],
@@ -66,7 +66,7 @@ def nice_component(title: str) -> Element:
         p["Footer"]
     ].set_slot(slot)
 
-foo = nice_component("cool title")[
+foo = get_element("cool title")[
     div["Hello, World!"]
 ]
 
@@ -81,4 +81,19 @@ This will yield the following HTML:
   <div>Hello, World!</div>
   <p>Footer</p>
 </div>
+```
+
+## Components
+
+We also provide a `@component` decorator that enables the direct usage of the `[...]` operator to both instantiate the component and add
+chilren, similar to regular Elements:
+
+```python
+@component
+def my_component(title: str | None = None) -> Element:
+    slot = div()
+    return div[title or "no title", slot].set_slot(slot)
+
+view = my_component["Hello, World!"]
+view2 = my_component("nice title")["Hello, World!"]
 ```

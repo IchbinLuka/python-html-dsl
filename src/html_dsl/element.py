@@ -1,4 +1,5 @@
 from __future__ import annotations
+from typing import Callable, Generic, ParamSpec
 
 type Child = "Element | str"
 
@@ -48,6 +49,8 @@ class Element(metaclass=ElementMeta):
         return self
 
     def __getitem__(self, children: tuple[Child, ...] | Child) -> Element:
+        if self.slot is self and len(self.children) > 0:
+            raise ValueError("Cannot set children on a slot that already has children")
         if isinstance(children, tuple):
             self.slot.children = children
         else:
@@ -56,3 +59,29 @@ class Element(metaclass=ElementMeta):
 
     def render(self) -> str:
         return f"<!DOCTYPE html>\n{str(self)}"
+
+P = ParamSpec("P")
+
+class component(Generic[P]):
+    """Utility decorator for functional components that enables the direct usage of the [...]
+    operator to both instantiate the component and add chilren, similar to regular Elements.
+
+    Example:
+    ```python
+    @component
+    def my_component(title: str | None = None) -> Element:
+        slot = div()
+        return div[title or "no title", slot].set_slot(slot)
+
+    view = my_component["Hello, World!"]
+    view2 = my_component("nice title")["Hello, World!"]
+    ```
+    """
+    def __init__(self, fun: Callable[P, Element]) -> None:
+        self.fun = fun
+
+    def __getitem__(self, *args):
+        return self.fun()[*args]  # type: ignore
+
+    def __call__(self, *args: P.args, **kwargs: P.kwargs):
+        return self.fun(*args, **kwargs)
