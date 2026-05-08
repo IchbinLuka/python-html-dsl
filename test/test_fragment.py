@@ -7,10 +7,7 @@ from html_dsl.html import div, p
 def test_fragment_renders_children_without_wrapper():
     # A Fragment should render its children directly without any enclosing tag.
     frag = Fragment()[p["Child"], "text"]
-    rendered = frag.render()
 
-    assert rendered == "<!DOCTYPE html>\n<p>Child</p>text"
-    # Also ensure __str__ returns only the inner content (no tags)
     assert str(frag) == "<p>Child</p>text"
 
 
@@ -26,7 +23,6 @@ def test_empty_fragment_renders_nothing_but_allows_doctype():
     # A Fragment with no children should render as an empty string for str()
     f = Fragment()
     assert str(f) == ""
-    assert f.render() == "<!DOCTYPE html>\n"
 
 
 def test_setting_children_twice_raises_value_error():

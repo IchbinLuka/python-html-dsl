@@ -1,7 +1,13 @@
 from __future__ import annotations
-from typing import Callable, Generic, ParamSpec
 
-type Child = "Element | str"
+import sys
+from typing import Callable, Generic, ParamSpec, TypeAlias
+
+if sys.version_info >= (3, 14):
+    from string.templatelib import Template
+    Child: TypeAlias = "Element | str | Template"
+else:
+    Child: TypeAlias = "Element | str"
 
 class css:
     def __init__(self, classes: list[str] | str | None = None, **kwargs: str | float) -> None:
@@ -36,13 +42,21 @@ class Element(metaclass=ElementMeta):
                     for key, value in styles.attributes.items()
                 )
 
+    @staticmethod
+    def _convert_child(child: Child):
+        if sys.version_info >= (3, 14):
+            from string.templatelib import Template, convert
+            if isinstance(child, Template):
+                return "".join(item if isinstance(item, str) else str(item.value) for item in child)
+        return str(child)
+
     def __str__(self) -> str:
         attr = " ".join(
             f'{key}="{value}"' if len(value) > 0 else key
             for key, value in self.attr.items()
         )
         open_tag = f"{self.name} {attr}" if len(attr) > 0 else f"{self.name}"
-        return f"<{open_tag}>{''.join(str(child) for child in self.children)}</{self.name}>"
+        return f"<{open_tag}>{''.join(self._convert_child(child) for child in self.children)}</{self.name}>"
 
     def set_slot(self, slot: Element) -> Element:
         self.slot = slot
@@ -97,3 +111,6 @@ class Fragment(Element):
 
     def __str__(self) -> str:
         return "".join(str(child) for child in self.children)
+
+    def render(self) -> str:
+        raise ValueError("Cannot render a Fragment directly. Wrap it in an Element first.")
