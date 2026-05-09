@@ -101,3 +101,19 @@ def my_component(title: str | None = None) -> Element:
 view = my_component["Hello, World!"]
 view2 = my_component("nice title")["Hello, World!"]
 ```
+
+## Usage with FastAPI
+
+This package can also easilly be used with libraries such as FastAPI as an alternative to e.g. Jinja1:
+
+```python
+app = FastAPI()
+
+@app.get("/", response_class=HTMLResponse)
+async def index():
+    return html[
+        body[
+            div["Hello, world"]
+        ]
+    ].render()
+```
