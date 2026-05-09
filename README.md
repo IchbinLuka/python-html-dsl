@@ -104,7 +104,7 @@ view2 = my_component("nice title")["Hello, World!"]
 
 ## Usage with FastAPI
 
-This package can also easilly be used with libraries such as FastAPI as an alternative to e.g. Jinja1:
+This package can also easilly be used with libraries such as FastAPI as an alternative to e.g. Jinja2:
 
 ```python
 app = FastAPI()
